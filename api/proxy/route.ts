@@ -1,7 +1,10 @@
 // EdgeFlow Proxy API Route - Edge Processing Layer
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
 import { get } from '@vercel/edge-config';
+
+// Initialize Neon database connection
+const sql = neon(process.env.DATABASE_URL!);
 
 // Configuration interface
 interface ProxyConfig {

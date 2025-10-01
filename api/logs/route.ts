@@ -1,6 +1,9 @@
 // EdgeFlow Logs API - Serverless Monitoring and Analytics
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+// Initialize Neon database connection
+const sql = neon(process.env.DATABASE_URL!);
 
 interface LogEntry {
   timestamp: string;
@@ -49,7 +52,7 @@ export async function GET(request: NextRequest) {
     // Get total count
     const countQuery = `SELECT COUNT(*) as total FROM proxy_logs ${whereClause}`;
     const countResult = await sql.query(countQuery, params.slice(0, paramIndex - 1));
-    const total = parseInt(countResult.rows[0].total);
+    const total = parseInt(countResult[0].total);
 
     if (total === 0) {
       return NextResponse.json({
@@ -72,7 +75,7 @@ export async function GET(request: NextRequest) {
     `;
 
     const result = await sql.query(logsQuery, [...params.slice(0, paramIndex - 1), limit, offset]);
-    const logs: LogEntry[] = result.rows;
+    const logs: LogEntry[] = result as LogEntry[];
 
     // Check if there are more results
     const hasMore = offset + limit < total;
@@ -138,7 +141,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      logId: result.rows[0].id,
+      logId: result[0].id,
       timestamp: completeLogEntry.timestamp,
     });
 
@@ -176,7 +179,7 @@ export async function DELETE(request: NextRequest) {
       WHERE timestamp < ${cutoffDate.toISOString()}
     `;
 
-    const deletedCount = result.rowCount || 0;
+    const deletedCount = result.length || 0;
 
     // Log the cleanup activity
     console.log(`Cleaned up ${deletedCount} old log entries`);
