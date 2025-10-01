@@ -1,8 +1,8 @@
 # Software Specifications: Service-Worker Based Web Proxy with Scramjet and Vercel Functions
 
-**Author**: Manus AI
+**Author**: Alexander Scott
 **Date**: October 01, 2025
-**Version**: 2.0
+**Version**: 2.1
 
 ## 1. Introduction
 
