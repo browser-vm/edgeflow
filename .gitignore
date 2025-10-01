@@ -2,3 +2,5 @@ node_modules/
 .kilocode/
 .next/
 .env.local
+.vercel
+.env*.local
